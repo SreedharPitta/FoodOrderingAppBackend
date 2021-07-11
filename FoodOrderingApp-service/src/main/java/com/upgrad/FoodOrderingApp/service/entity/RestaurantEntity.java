@@ -39,16 +39,16 @@ public class RestaurantEntity implements Serializable {
 
     @Column(name = "customer_rating")
     @Size(max = 50)
-    private float customerRating;
+    private double customerRating;
 
 
     @Column(name = "average_price_for_two")
     @NotNull
-    private Integer averagePriceForTwo;
+    private Integer avgPrice;
 
 
     @Column(name = "number_of_customers_rated")
-    private Integer numberOfCustomersRated;
+    private Integer numberCustomersRated;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
@@ -88,28 +88,28 @@ public class RestaurantEntity implements Serializable {
         this.photoUrl = photoUrl;
     }
 
-    public float getCustomerRating() {
+    public double getCustomerRating() {
         return customerRating;
     }
 
-    public void setCustomerRating(float customerRating) {
+    public void setCustomerRating(double customerRating) {
         this.customerRating = customerRating;
     }
 
-    public Integer getAveragePriceForTwo() {
-        return averagePriceForTwo;
+    public Integer getAvgPrice() {
+        return avgPrice;
     }
 
-    public void setAveragePriceForTwo(Integer averagePriceForTwo) {
-        this.averagePriceForTwo = averagePriceForTwo;
+    public void setAvgPrice(Integer avgPrice) {
+        this.avgPrice = avgPrice;
     }
 
-    public Integer getNumberOfCustomersRated() {
-        return numberOfCustomersRated;
+    public Integer getNumberCustomersRated() {
+        return numberCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(Integer numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberCustomersRated(Integer numberCustomersRated) {
+        this.numberCustomersRated = numberCustomersRated;
     }
 
     public AddressEntity getAddress() {
@@ -128,8 +128,8 @@ public class RestaurantEntity implements Serializable {
                 ", restaurantName='" + restaurantName + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
                 ", customerRating=" + customerRating +
-                ", averagePriceForTwo=" + averagePriceForTwo +
-                ", numberOfCustomersRated=" + numberOfCustomersRated +
+                ", avgPrice=" + avgPrice +
+                ", numberCustomersRated=" + numberCustomersRated +
                 ", address=" + address +
                 '}';
     }
