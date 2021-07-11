@@ -5,7 +5,9 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="FoodOrderingApp-service" value="6175af82-6fb1-4245-a278-af0dbe1d9677" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
