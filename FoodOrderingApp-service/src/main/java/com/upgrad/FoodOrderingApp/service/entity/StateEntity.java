@@ -27,6 +27,16 @@ public class StateEntity implements Serializable {
     @Size(max = 30)
     private String stateName;
 
+    public StateEntity() {
+        super();
+    }
+
+    public StateEntity(@NotNull @Size(max = 200) String uuid, @NotNull @Size(max = 30) String stateName) {
+        super();
+        this.uuid = uuid;
+        this.stateName = stateName;
+    }
+
     public Integer getId() {
         return id;
     }
