@@ -25,6 +25,16 @@ public class PaymentEntity {
     @Size(max = 255)
     private String paymentName;
 
+    public PaymentEntity() {
+        super();
+    }
+
+    public PaymentEntity(String uuid, String paymentName) {
+        super();
+        this.uuid = uuid;
+        this.paymentName = paymentName;
+    }
+
     public Integer getId() {
         return id;
     }

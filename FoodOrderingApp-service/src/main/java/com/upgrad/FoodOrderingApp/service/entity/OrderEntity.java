@@ -3,7 +3,9 @@ package com.upgrad.FoodOrderingApp.service.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "orders")
@@ -57,6 +59,24 @@ public class OrderEntity {
     @JoinColumn(name = "restaurant_id")
     @NotNull
     private RestaurantEntity restaurant;
+
+    public OrderEntity() {
+        super();
+    }
+
+    public OrderEntity(String uuid, Double bill, CouponEntity coupon, Double discount, Date date, PaymentEntity payment, CustomerEntity customer, AddressEntity address, RestaurantEntity restaurant) {
+        super();
+        this.uuid = uuid;
+        this.bill = bill;
+        this.coupon = coupon;
+        this.discount = discount;
+        this.date = ZonedDateTime.ofInstant(date.toInstant(),
+                ZoneId.systemDefault());
+        this.payment = payment;
+        this.customer = customer;
+        this.address = address;
+        this.restaurant = restaurant;
+    }
 
     public Integer getId() {
         return id;
