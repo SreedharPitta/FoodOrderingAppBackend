@@ -12,4 +12,12 @@ public class CategoryService {
     public List<CategoryEntity> getCategoriesByRestaurant(String restaurantId){
         return null;
     }
+
+    public CategoryEntity getCategoryById(String categoryId){
+        return null;
+    }
+
+    public List<CategoryEntity> getAllCategoriesOrderedByName(){
+        return null;
+    }
 }
