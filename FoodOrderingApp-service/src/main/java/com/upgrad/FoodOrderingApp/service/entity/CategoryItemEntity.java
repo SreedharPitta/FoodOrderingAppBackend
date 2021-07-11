@@ -22,7 +22,6 @@ public class CategoryItemEntity implements Serializable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "item_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private ItemEntity item;
 
     @ManyToOne
