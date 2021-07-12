@@ -145,7 +145,6 @@ public class RestaurantController {
                 }
                 itemLists.add(itemList);
             }
-            //TODO sort item list based on the Name
             CategoryList categoryList = new CategoryList().id(UUID.fromString(categoryEntity.getUuid()))
                     .categoryName(categoryEntity.getCategoryName()).itemList(itemLists);
             categoryLists.add(categoryList);
