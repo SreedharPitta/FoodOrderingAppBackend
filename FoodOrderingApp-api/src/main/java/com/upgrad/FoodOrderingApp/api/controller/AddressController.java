@@ -1,9 +1,6 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
-import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
-import com.upgrad.FoodOrderingApp.api.model.SaveAddressRequest;
-import com.upgrad.FoodOrderingApp.api.model.SaveAddressResponse;
-import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
@@ -18,7 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,6 +29,7 @@ public class AddressController {
 
     @Autowired
     private CustomerService customerService;
+
     //Endpoint for saving Address
     @RequestMapping(method = RequestMethod.POST, path = "/address", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorizationToken, @RequestBody(required = false) final SaveAddressRequest saveAddressRequest) throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
@@ -65,8 +64,14 @@ public class AddressController {
 
     //Endpoint to get all states
     @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<StatesListResponse> getAllStates(@RequestHeader("authorization") final String authorizationToken) {
-        StatesListResponse statesListResponse = new StatesListResponse();
+    public ResponseEntity<StatesListResponse> getAllStates() {
+        List<StateEntity> stateEntities = addressService.getAllStates();
+        List<StatesList> statesLists = new ArrayList<StatesList>();
+        for (StateEntity stateEntity : stateEntities) {
+            StatesList statesList = new StatesList().id(UUID.fromString(stateEntity.getUuid())).stateName(stateEntity.getStateName());
+            statesLists.add(statesList);
+        }
+        StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
         return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
     }
 }

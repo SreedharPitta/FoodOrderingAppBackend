@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "state")
 @NamedQueries({
-
+        @NamedQuery(name = "allStates", query = "select s from StateEntity s")
 })
 public class StateEntity implements Serializable {
 
