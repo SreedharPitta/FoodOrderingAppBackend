@@ -5,6 +5,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerAddressDAO;
 import com.upgrad.FoodOrderingApp.service.dao.StateDAO;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class AddressService {
     }
 
 
-    public AddressEntity getAddressByUUID(final String uuid, final CustomerEntity customerEntity) throws AddressNotFoundException {
+    public AddressEntity getAddressByUUID(final String uuid, final CustomerEntity customerEntity) throws AddressNotFoundException, AuthorizationFailedException {
         if(uuid == null || uuid.isEmpty()){
             throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
         }
@@ -80,7 +81,7 @@ public class AddressService {
         }
         CustomerAddressEntity customerAddressEntity = customerAddressDAO.getCustomerAddressByAddress(addressEntity);
         if(customerAddressEntity == null || !customerAddressEntity.getCustomer().equals(customerEntity)){
-            throw new AddressNotFoundException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
+            throw new AuthorizationFailedException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
         }
         return addressEntity;
     }

@@ -8,9 +8,6 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "order_item")
-@NamedQueries({
-
-})
 public class OrderItemEntity {
     @Column(name = "ID")
     @Id

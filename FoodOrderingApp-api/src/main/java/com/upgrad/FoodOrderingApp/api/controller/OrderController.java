@@ -5,7 +5,6 @@ import com.upgrad.FoodOrderingApp.service.businness.*;
 import com.upgrad.FoodOrderingApp.service.common.ItemType;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.*;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,7 +55,7 @@ public class OrderController {
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
         List<OrderEntity> orderEntities = orderService.getOrdersByCustomers(customerEntity.getUuid());
         List<OrderList> orders = new ArrayList<OrderList>();
-        for(OrderEntity orderEntity : orderEntities){
+        for (OrderEntity orderEntity : orderEntities) {
             OrderList order = new OrderList().id(UUID.fromString(orderEntity.getUuid()))
                     .date(orderEntity.getDate().toString()).bill(BigDecimal.valueOf(orderEntity.getBill()))
                     .discount(BigDecimal.valueOf(orderEntity.getDiscount()))
@@ -77,12 +75,12 @@ public class OrderController {
         final String accessToken = authorizationToken.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
         CouponEntity couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
-        AddressEntity addressEntity = addressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);
         PaymentEntity paymentEntity = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
+        AddressEntity addressEntity = addressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString());
 
         List<OrderItemEntity> orderItemEntities = new ArrayList<OrderItemEntity>();
-        for(ItemQuantity itemQuantity : saveOrderRequest.getItemQuantities()){
+        for (ItemQuantity itemQuantity : saveOrderRequest.getItemQuantities()) {
             ItemEntity itemEntity = itemService.getItemByUuid(itemQuantity.getItemId().toString());
             OrderItemEntity orderItemEntity = new OrderItemEntity();
             orderItemEntity.setItem(itemEntity);
@@ -101,35 +99,35 @@ public class OrderController {
         orderEntity.setPayment(paymentEntity);
         orderEntity.setCustomer(customerEntity);
         orderEntity.setRestaurant(restaurantEntity);
-       OrderEntity updatedOrderEntity = orderService.saveOrder(orderEntity);
-       //To save the Order Item Entities
-        if(orderEntity !=null){
-            for(OrderItemEntity orderItemEntity : orderItemEntities){
-                orderItemEntity.setOrder(orderEntity);
+        OrderEntity updatedOrderEntity = orderService.saveOrder(orderEntity);
+        //To save the Order Item Entities
+        if (updatedOrderEntity != null) {
+            for (OrderItemEntity orderItemEntity : orderItemEntities) {
+                orderItemEntity.setOrder(updatedOrderEntity);
                 orderService.saveOrderItem(orderItemEntity);
             }
         }
-        SaveOrderResponse saveOrderResponse = new SaveOrderResponse().id(orderEntity.getUuid()).status("ORDER SUCCESSFULLY PLACED");
-        return new ResponseEntity<SaveOrderResponse>(saveOrderResponse,HttpStatus.CREATED);
+        SaveOrderResponse saveOrderResponse = new SaveOrderResponse().id(updatedOrderEntity.getUuid()).status("ORDER SUCCESSFULLY PLACED");
+        return new ResponseEntity<SaveOrderResponse>(saveOrderResponse, HttpStatus.CREATED);
     }
 
 
     private List<ItemQuantityResponse> getOrderItemQuantities(List<OrderItemEntity> orderItems) {
         List<ItemQuantityResponse> itemQuantityResponses = new ArrayList<ItemQuantityResponse>();
-        for(OrderItemEntity orderItem : orderItems){
+        for (OrderItemEntity orderItem : orderItems) {
             ItemQuantityResponseItem itemQuantityResponseItem = new ItemQuantityResponseItem()
                     .id(UUID.fromString(orderItem.getItem().getUuid()))
                     .itemName(orderItem.getItem().getItemName())
                     .itemPrice(orderItem.getItem().getPrice());
-            if(ItemType.VEG.equals(orderItem.getItem().getType())){
-               itemQuantityResponseItem.setType(ItemQuantityResponseItem.TypeEnum.VEG);
-            }else if(ItemType.NON_VEG.equals(orderItem.getItem().getType())){
+            if (ItemType.VEG.equals(orderItem.getItem().getType())) {
+                itemQuantityResponseItem.setType(ItemQuantityResponseItem.TypeEnum.VEG);
+            } else if (ItemType.NON_VEG.equals(orderItem.getItem().getType())) {
                 itemQuantityResponseItem.setType(ItemQuantityResponseItem.TypeEnum.NON_VEG);
             }
             ItemQuantityResponse itemQuantityResponse = new ItemQuantityResponse().item(itemQuantityResponseItem)
                     .quantity(orderItem.getQuantity())
                     .price(orderItem.getPrice());
-        itemQuantityResponses.add(itemQuantityResponse);
+            itemQuantityResponses.add(itemQuantityResponse);
         }
         return itemQuantityResponses;
     }
@@ -163,6 +161,6 @@ public class OrderController {
         OrderListCustomer orderListCustomer = new OrderListCustomer().id(UUID.fromString(customer.getUuid()))
                 .firstName(customer.getFirstName()).lastName(customer.getLastName()).emailAddress(customer.getEmail())
                 .contactNumber(customer.getContactNumber());
-                return orderListCustomer;
+        return orderListCustomer;
     }
 }

@@ -7,6 +7,8 @@ import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,23 +27,27 @@ public class OrderService {
     @Autowired
     private OrderItemDAO orderItemDAO;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderEntity saveOrder(OrderEntity orderEntity) {
         return orderDAO.saveOrder(orderEntity);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
         return orderItemDAO.saveOrderItem(orderItemEntity);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public CouponEntity getCouponByCouponId(String couponId) throws CouponNotFoundException {
         CouponEntity couponEntity = couponDAO.getCouponByUUID(couponId);
-        if(couponEntity == null){
+        if (couponEntity == null) {
             throw new CouponNotFoundException("CPF-002", "No coupon by this id");
         }
         return couponEntity;
     }
 
     //To get Coupon by Name
+    @Transactional(propagation = Propagation.REQUIRED)
     public CouponEntity getCouponByCouponName(String couponName) throws CouponNotFoundException {
         if (couponName == null || couponName.isEmpty()) {
             throw new CouponNotFoundException("CPF-002", "Coupon name field should not be empty");
@@ -54,12 +60,14 @@ public class OrderService {
     }
 
     //To get Customer Orders
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<OrderEntity> getOrdersByCustomers(String customerUuid) {
         CustomerEntity customerEntity = customerService.getCustomerByUuid(customerUuid);
         return orderDAO.getOrdersByCustomers(customerEntity);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<OrderEntity> getOrdersByAddress(AddressEntity addressEntity) {
-      return orderDAO.getOrdersByAddress(addressEntity);
+        return orderDAO.getOrdersByAddress(addressEntity);
     }
 }

@@ -19,9 +19,9 @@ public class OrderDAO {
 
 
     public List<OrderEntity> getOrdersByCustomers(CustomerEntity customer) {
-        try{
+        try {
             return this.entityManager.createNamedQuery("ordersByCustomers", OrderEntity.class).setParameter("customer", customer).getResultList();
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return Collections.emptyList();
         }
 
@@ -30,16 +30,16 @@ public class OrderDAO {
     public List<OrderEntity> getOrdersByAddress(AddressEntity addressEntity) {
         try {
             return this.entityManager.createNamedQuery("ordersByAddress", OrderEntity.class).setParameter("address", addressEntity).getResultList();
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return Collections.emptyList();
         }
     }
 
     public OrderEntity saveOrder(OrderEntity orderEntity) {
-        try{
+        try {
             entityManager.persist(orderEntity);
             return orderEntity;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
