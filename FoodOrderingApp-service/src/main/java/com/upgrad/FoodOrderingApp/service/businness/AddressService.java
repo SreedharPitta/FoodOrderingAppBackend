@@ -8,6 +8,8 @@ import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ public class AddressService {
     @Autowired
     private OrderService orderService;
 
+    //To save Address
+    @Transactional(propagation = Propagation.REQUIRED)
     public AddressEntity saveAddress(final AddressEntity addressEntity, final CustomerEntity customerEntity) throws SaveAddressException {
         validateAddressFields(addressEntity);
         if (!validatePinCode(addressEntity.getPincode())) {
@@ -34,11 +38,13 @@ public class AddressService {
         }
         AddressEntity updatedAddressEntity = addressDAO.saveAddress(addressEntity);
 
+        //This will update the Customer Address Entity
         CustomerAddressEntity customerAddressEntity = new CustomerAddressEntity();
         customerAddressEntity.setAddress(addressEntity);
         customerAddressEntity.setCustomer(customerEntity);
         customerAddressDAO.saveCustomerAddress(customerAddressEntity);
-        return null;
+
+        return updatedAddressEntity;
     }
 
     public List<AddressEntity> getAllAddress(final CustomerEntity customerEntity) {

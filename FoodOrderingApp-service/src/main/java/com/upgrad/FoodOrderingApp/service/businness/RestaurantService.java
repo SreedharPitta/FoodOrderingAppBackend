@@ -7,6 +7,7 @@ import com.upgrad.FoodOrderingApp.service.entity.CategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantCategoryEntity;
 import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.InvalidRatingException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,8 +67,16 @@ public class RestaurantService {
         return restaurantEntity;
     }
 
-    public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, double rating) {
-        return null;
+    public RestaurantEntity updateRestaurantRating(RestaurantEntity restaurantEntity, double rating) throws InvalidRatingException {
+        if(Double.valueOf(rating) < 1 || Double.valueOf(rating) > 5){
+            throw new InvalidRatingException("IRE-001", "Restaurant should be in the range of 1 to 5");
+        }
+        Double oldRating = restaurantEntity.getCustomerRating();
+        Integer oldCustomersReviewsCount = restaurantEntity.getNumberCustomersRated();
+        Double newRating = ((oldRating * oldCustomersReviewsCount) + rating)/(oldCustomersReviewsCount + 1);
+        restaurantEntity.setCustomerRating(newRating);
+        restaurantEntity.setNumberCustomersRated(oldCustomersReviewsCount + 1);
+        return restaurantDAO.updateRestaurant(restaurantEntity);
     }
 
 }

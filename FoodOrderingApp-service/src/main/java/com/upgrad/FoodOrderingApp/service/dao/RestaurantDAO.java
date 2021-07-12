@@ -39,4 +39,8 @@ public class RestaurantDAO {
             return Collections.emptyList();
         }
     }
+
+    public RestaurantEntity updateRestaurant(RestaurantEntity restaurantEntity) {
+        return entityManager.merge(restaurantEntity);
+    }
 }
