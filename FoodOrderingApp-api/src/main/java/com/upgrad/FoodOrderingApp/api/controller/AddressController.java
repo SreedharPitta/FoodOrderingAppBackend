@@ -84,10 +84,13 @@ public class AddressController {
     @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getAllStates() {
         List<StateEntity> stateEntities = addressService.getAllStates();
-        List<StatesList> statesLists = new ArrayList<StatesList>();
-        for (StateEntity stateEntity : stateEntities) {
-            StatesList statesList = new StatesList().id(UUID.fromString(stateEntity.getUuid())).stateName(stateEntity.getStateName());
-            statesLists.add(statesList);
+        List<StatesList> statesLists = null;
+        if(!stateEntities.isEmpty()) {
+            statesLists = new ArrayList<StatesList>();
+            for (StateEntity stateEntity : stateEntities) {
+                StatesList statesList = new StatesList().id(UUID.fromString(stateEntity.getUuid())).stateName(stateEntity.getStateName());
+                statesLists.add(statesList);
+            }
         }
         StatesListResponse statesListResponse = new StatesListResponse().states(statesLists);
         return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);

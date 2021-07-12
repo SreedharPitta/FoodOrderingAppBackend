@@ -21,18 +21,18 @@ public class CustomerAddressDAO {
         entityManager.persist(customerAddressEntity);
     }
 
-        public List<CustomerAddressEntity> getAllAddress(CustomerEntity customerEntity) {
-            try {
-                return this.entityManager.createNamedQuery("allCustomerAddresses", CustomerAddressEntity.class).setParameter("customer", customerEntity).getResultList();
-            }catch (NoResultException nre){
-                return Collections.EMPTY_LIST;
-            }
+    public List<CustomerAddressEntity> getAllAddress(CustomerEntity customerEntity) {
+        try {
+            return this.entityManager.createNamedQuery("allCustomerAddresses", CustomerAddressEntity.class).setParameter("customer", customerEntity).getResultList();
+        } catch (NoResultException nre) {
+            return Collections.EMPTY_LIST;
         }
+    }
 
     public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity) {
         try {
             return this.entityManager.createNamedQuery("customerAddressByAddress", CustomerAddressEntity.class).setParameter("address", addressEntity).getSingleResult();
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return null;
         }
     }

@@ -64,7 +64,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(SaveAddressException.class)
     public ResponseEntity<ErrorResponse> saveAddressException(SaveAddressException exe, WebRequest request) {
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ErrorResponse>(new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SignUpRestrictedException.class)
