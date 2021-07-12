@@ -263,8 +263,10 @@ public class RestaurantControllerTest {
         final RestaurantEntity restaurantEntity = getRestaurantEntity();
         when(mockRestaurantService.restaurantByUUID(restaurantId)).thenReturn(restaurantEntity);
 
+        final RestaurantEntity updatedRestaurantEntity = new RestaurantEntity();
+        updatedRestaurantEntity.setUuid(String.valueOf(UUID.fromString(restaurantId)));
         when(mockRestaurantService.updateRestaurantRating(restaurantEntity, 4.5))
-                .thenReturn(new RestaurantEntity());
+                .thenReturn(updatedRestaurantEntity);
 
         mockMvc
                 .perform(put("/restaurant/" + restaurantId + "?customer_rating=4.5")

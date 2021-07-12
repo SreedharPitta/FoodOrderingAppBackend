@@ -64,16 +64,15 @@ public class RestaurantService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public RestaurantEntity updateRestaurantRating(final RestaurantEntity restaurantEntity, final Double customerRating) throws InvalidRatingException {
-        System.out.println("Entered Here for Function");
-        if (customerRating == null || customerRating.isNaN() || customerRating < 1 || customerRating > 5) {
+        if (!customerRating.isNaN() && !(customerRating < 1) && !(customerRating > 5)) {
+            Double oldRating = restaurantEntity.getCustomerRating();
+            Integer numberCustomersRated = restaurantEntity.getNumberCustomersRated();
+            Double newRating = ((oldRating * numberCustomersRated) + customerRating) / (numberCustomersRated + 1);
+            restaurantEntity.setCustomerRating(newRating);
+            restaurantEntity.setNumberCustomersRated(restaurantEntity.getNumberCustomersRated() + 1);
+        } else {
             throw new InvalidRatingException("IRE-001", "Restaurant should be in the range of 1 to 5");
         }
-        Double oldRating = restaurantEntity.getCustomerRating();
-        Integer numberCustomersRated = restaurantEntity.getNumberCustomersRated();
-        Double newRating = ((oldRating * numberCustomersRated) + customerRating) / (numberCustomersRated + 1);
-        restaurantEntity.setCustomerRating(newRating);
-        restaurantEntity.setNumberCustomersRated(restaurantEntity.getNumberCustomersRated() + 1);
-        System.out.println("Entered End for Function");
         return restaurantDAO.updateRestaurant(restaurantEntity);
     }
 }
