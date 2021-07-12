@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Table(name = "item")
 @NamedQueries({
         @NamedQuery(name = "itemByUuid", query = "select i from ItemEntity i where i.uuid=:uuid"),
-        @NamedQuery(name = "allItemsByCategoryAndRestaurant", query = "select i from ItemEntity i  where i.id in (select ri.itemId from RestaurantItemEntity ri inner join CategoryItemEntity ci on ri.itemId = ci.itemId where ri.restaurantId = (select r.id from RestaurantEntity r where r.uuid=:restaurantId) and ci.categoryId = (select c.id from CategoryEntity c where c.uuid=:categoryId )) order by i.itemName asc")
+        @NamedQuery(name = "allItemsByCategoryAndRestaurant", query = "select i from ItemEntity i where i.id in (select ri.itemId from RestaurantItemEntity ri inner join CategoryItemEntity ci on ri.itemId = ci.itemId where ri.restaurantId = (select r.id from RestaurantEntity r where r.uuid=:restaurantId) and ci.categoryId = (select c.id from CategoryEntity c where c.uuid=:categoryId )) order by i.itemName asc"),
 })
 public class ItemEntity implements Serializable {
 

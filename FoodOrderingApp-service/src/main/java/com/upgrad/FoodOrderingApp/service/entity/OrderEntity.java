@@ -16,7 +16,8 @@ import java.util.List;
 @Table(name = "orders")
 @NamedQueries({
         @NamedQuery(name = "ordersByCustomers", query = "select o from OrderEntity o where o.customer=:customer order by o.date desc"),
-        @NamedQuery(name = "ordersByAddress", query = "select o from OrderEntity o where o.address=:address")
+        @NamedQuery(name = "ordersByAddress", query = "select o from OrderEntity o where o.address=:address"),
+        @NamedQuery(name = "ordersByRestaurant",query = "select o from OrderEntity o where o.restaurant=:restaurant")
 })
 public class OrderEntity {
     @Column(name = "ID")

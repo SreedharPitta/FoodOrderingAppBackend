@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.dao;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
+import com.upgrad.FoodOrderingApp.service.entity.RestaurantEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +42,14 @@ public class OrderDAO {
             return orderEntity;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public List<OrderEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity) {
+        try {
+            return this.entityManager.createNamedQuery("ordersByRestaurant", OrderEntity.class).setParameter("restaurant", restaurantEntity).getResultList();
+        } catch (NoResultException nre) {
+            return Collections.emptyList();
         }
     }
 }
