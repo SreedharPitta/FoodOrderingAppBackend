@@ -3,10 +3,7 @@ package com.upgrad.FoodOrderingApp.service.businness;
 import com.upgrad.FoodOrderingApp.service.dao.AddressDAO;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAddressDAO;
 import com.upgrad.FoodOrderingApp.service.dao.StateDAO;
-import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,8 @@ public class AddressService {
     @Autowired
     private CustomerAddressDAO customerAddressDAO;
 
+    @Autowired
+    private OrderService orderService;
 
     public AddressEntity saveAddress(final AddressEntity addressEntity, final CustomerEntity customerEntity) throws SaveAddressException {
         validateAddressFields(addressEntity);
@@ -52,6 +51,11 @@ public class AddressService {
     }
 
     public AddressEntity deleteAddress(final AddressEntity addressEntity) {
+        List<OrderEntity> orders = orderService.getOrdersByAddress(addressEntity);
+        if(!orders.isEmpty()){
+            addressEntity.setActive(0);
+            return addressDAO.updateAddress(addressEntity);
+        }
         return addressDAO.deleteAddress(addressEntity);
     }
 
@@ -60,8 +64,19 @@ public class AddressService {
     }
 
 
-    public AddressEntity getAddressByUUID(final String uuid, final CustomerEntity customerEntity) {
-        return null;
+    public AddressEntity getAddressByUUID(final String uuid, final CustomerEntity customerEntity) throws AddressNotFoundException {
+        if(uuid == null || uuid.isEmpty()){
+            throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
+        }
+        AddressEntity addressEntity = addressDAO.getAddressByUuid(uuid);
+        if(addressEntity == null){
+            throw new AddressNotFoundException("ANF-003", "No address by this id");
+        }
+        CustomerAddressEntity customerAddressEntity = customerAddressDAO.getCustomerAddressByAddress(addressEntity);
+        if(customerAddressEntity == null || !customerAddressEntity.getCustomer().equals(customerEntity)){
+            throw new AddressNotFoundException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
+        }
+        return addressEntity;
     }
 
     public StateEntity getStateByUUID(final String uuid) throws AddressNotFoundException {

@@ -70,9 +70,14 @@ public class AddressController {
 
     //End Point to Delete Saved Address
     @RequestMapping(method = RequestMethod.DELETE, path = "/address/{address_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<AddressListResponse> deleteAddress(@RequestHeader("authorization") final String authorizationToken, @PathVariable("address_id") final String addressId) {
-        AddressListResponse addressListResponse = new AddressListResponse();
-        return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
+    public ResponseEntity<DeleteAddressResponse> deleteAddress(@RequestHeader("authorization") final String authorizationToken, @PathVariable("address_id") final String addressId) throws AuthorizationFailedException, AddressNotFoundException {
+        final String accessToken = authorizationToken.split("Bearer ")[1];
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        AddressEntity addressEntity = addressService.getAddressByUUID(addressId, customerEntity);
+        AddressEntity deletedAddressEntity = addressService.deleteAddress(addressEntity);
+        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse().id(UUID.fromString(deletedAddressEntity.getUuid()))
+                .status("ADDRESS DELETED SUCCESSFULLY");
+        return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
     }
 
     //Endpoint to get all states

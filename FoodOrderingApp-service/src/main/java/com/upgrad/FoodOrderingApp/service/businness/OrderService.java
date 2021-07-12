@@ -2,10 +2,7 @@ package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CouponDAO;
 import com.upgrad.FoodOrderingApp.service.dao.OrderDAO;
-import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
-import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,5 +49,9 @@ public class OrderService {
     public List<OrderEntity> getOrdersByCustomers(String customerUuid) {
         CustomerEntity customerEntity = customerService.getCustomerByUuid(customerUuid);
         return orderDAO.getOrdersByCustomers(customerEntity);
+    }
+
+    public List<OrderEntity> getOrdersByAddress(AddressEntity addressEntity) {
+      return orderDAO.getOrdersByAddress(addressEntity);
     }
 }

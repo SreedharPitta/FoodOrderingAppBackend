@@ -28,4 +28,12 @@ public class CustomerAddressDAO {
                 return Collections.EMPTY_LIST;
             }
         }
+
+    public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity) {
+        try {
+            return this.entityManager.createNamedQuery("customerAddressByAddress", CustomerAddressEntity.class).setParameter("address", addressEntity).getSingleResult();
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
 }

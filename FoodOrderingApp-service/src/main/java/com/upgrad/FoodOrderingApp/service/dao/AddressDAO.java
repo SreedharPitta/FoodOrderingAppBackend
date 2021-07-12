@@ -16,11 +16,24 @@ public class AddressDAO {
     private EntityManager entityManager;
 
     public AddressEntity saveAddress(AddressEntity addressEntity) {
-        return null;
+        entityManager.persist(addressEntity);
+        return addressEntity;
     }
 
     public AddressEntity deleteAddress(AddressEntity addressEntity) {
-        return null;
+        entityManager.remove(addressEntity);
+        return addressEntity;
     }
 
+    public AddressEntity getAddressByUuid(String uuid) {
+        try{
+           return this.entityManager.createNamedQuery("addressByUuid", AddressEntity.class).setParameter("uuid", uuid).getSingleResult();
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
+
+    public AddressEntity updateAddress(AddressEntity addressEntity) {
+        return entityManager.merge(addressEntity);
+    }
 }
