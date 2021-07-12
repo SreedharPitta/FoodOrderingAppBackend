@@ -36,12 +36,13 @@ public class RestaurantEntity implements Serializable {
 
     @Column(name = "photo_url")
     @NotNull
-    @Size(max = 50)
+    @Size(max = 255)
     private String photoUrl;
 
 
     @Column(name = "customer_rating")
     @Size(max = 50)
+    @NotNull
     private Double customerRating;
 
 
@@ -51,6 +52,7 @@ public class RestaurantEntity implements Serializable {
 
 
     @Column(name = "number_of_customers_rated")
+    @NotNull
     private Integer numberCustomersRated;
 
     @ManyToOne

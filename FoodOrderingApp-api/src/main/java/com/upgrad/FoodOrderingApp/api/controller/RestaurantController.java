@@ -87,8 +87,9 @@ public class RestaurantController {
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
         final RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
         RestaurantEntity updatedRestaurantEntity = restaurantService.updateRestaurantRating(restaurantEntity, customerRating);
-        RestaurantUpdatedResponse restaurantUpdatedResponse = new RestaurantUpdatedResponse().id(UUID.fromString(updatedRestaurantEntity.getUuid()))
-                .status("RESTAURANT RATING UPDATED SUCCESSFULLY");
+        RestaurantUpdatedResponse restaurantUpdatedResponse = new RestaurantUpdatedResponse();
+        restaurantUpdatedResponse.setId(UUID.fromString(updatedRestaurantEntity.getUuid()));
+        restaurantUpdatedResponse.setStatus("RESTAURANT RATING UPDATED SUCCESSFULLY");
         return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
     }
 
