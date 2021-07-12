@@ -34,4 +34,13 @@ public class OrderDAO {
             return Collections.emptyList();
         }
     }
+
+    public OrderEntity saveOrder(OrderEntity orderEntity) {
+        try{
+            entityManager.persist(orderEntity);
+            return orderEntity;
+        }catch (Exception e){
+            return null;
+        }
+    }
 }

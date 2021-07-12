@@ -2,6 +2,7 @@ package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CouponDAO;
 import com.upgrad.FoodOrderingApp.service.dao.OrderDAO;
+import com.upgrad.FoodOrderingApp.service.dao.OrderItemDAO;
 import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,23 @@ public class OrderService {
     @Autowired
     private OrderDAO orderDAO;
 
+    @Autowired
+    private OrderItemDAO orderItemDAO;
+
     public OrderEntity saveOrder(OrderEntity orderEntity) {
-        return null;
+        return orderDAO.saveOrder(orderEntity);
     }
 
     public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
-        return null;
+        return orderItemDAO.saveOrderItem(orderItemEntity);
     }
 
-    public CouponEntity getCouponByCouponId(String couponId) {
-        return null;
+    public CouponEntity getCouponByCouponId(String couponId) throws CouponNotFoundException {
+        CouponEntity couponEntity = couponDAO.getCouponByUUID(couponId);
+        if(couponEntity == null){
+            throw new CouponNotFoundException("CPF-002", "No coupon by this id");
+        }
+        return couponEntity;
     }
 
     //To get Coupon by Name

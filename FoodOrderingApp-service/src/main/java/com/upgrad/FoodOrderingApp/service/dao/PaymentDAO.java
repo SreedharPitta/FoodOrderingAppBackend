@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -17,6 +18,14 @@ public class PaymentDAO {
     public List<PaymentEntity> getAllPaymentMethods() {
         try {
             return this.entityManager.createNamedQuery("allPaymentMethods", PaymentEntity.class).getResultList();
+        } catch (NoResultException nre) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    public PaymentEntity getPaymentByUuid(String uuid) {
+        try {
+            return this.entityManager.createNamedQuery("paymentByUuid", PaymentEntity.class).setParameter("uuid", uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

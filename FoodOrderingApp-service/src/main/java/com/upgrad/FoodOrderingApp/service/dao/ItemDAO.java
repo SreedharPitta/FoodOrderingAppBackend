@@ -23,4 +23,12 @@ public class ItemDAO {
             return Collections.emptyList();
         }
     }
+
+    public ItemEntity getItemByUuid(String uuid) {
+        try {
+            return this.entityManager.createNamedQuery("itemByUuid", ItemEntity.class).setParameter("uuid", uuid).getSingleResult();
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
 }

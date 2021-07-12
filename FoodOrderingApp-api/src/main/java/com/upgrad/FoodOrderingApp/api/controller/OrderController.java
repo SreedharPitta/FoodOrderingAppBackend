@@ -1,12 +1,10 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
-import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.businness.OrderService;
+import com.upgrad.FoodOrderingApp.service.businness.*;
 import com.upgrad.FoodOrderingApp.service.common.ItemType;
 import com.upgrad.FoodOrderingApp.service.entity.*;
-import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
-import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
+import com.upgrad.FoodOrderingApp.service.exception.*;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +29,18 @@ public class OrderController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private AddressService addressService;
+
+    @Autowired
+    private ItemService itemService;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/order/coupon/{coupon_name}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CouponDetailsResponse> getCouponByCouponName(@RequestHeader("authorization") final String authorizationToken, @PathVariable("coupon_name") final String couponName) throws AuthorizationFailedException, CouponNotFoundException {
@@ -61,8 +73,44 @@ public class OrderController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/order", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<CouponDetailsResponse> saveOrder() {
-        return null;
+    public ResponseEntity<SaveOrderResponse> saveOrder(@RequestHeader("authorization") final String authorizationToken, @RequestBody(required = false) final SaveOrderRequest saveOrderRequest) throws AuthorizationFailedException, CouponNotFoundException, AddressNotFoundException, PaymentMethodNotFoundException, RestaurantNotFoundException, ItemNotFoundException {
+        final String accessToken = authorizationToken.split("Bearer ")[1];
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        CouponEntity couponEntity = orderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString());
+        AddressEntity addressEntity = addressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity);
+        PaymentEntity paymentEntity = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
+        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString());
+
+        List<OrderItemEntity> orderItemEntities = new ArrayList<OrderItemEntity>();
+        for(ItemQuantity itemQuantity : saveOrderRequest.getItemQuantities()){
+            ItemEntity itemEntity = itemService.getItemByUuid(itemQuantity.getItemId().toString());
+            OrderItemEntity orderItemEntity = new OrderItemEntity();
+            orderItemEntity.setItem(itemEntity);
+            orderItemEntity.setPrice(itemQuantity.getPrice());
+            orderItemEntity.setQuantity(itemQuantity.getQuantity());
+            orderItemEntities.add(orderItemEntity);
+        }
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderItems(orderItemEntities);
+        orderEntity.setUuid(UUID.randomUUID().toString());
+        orderEntity.setBill(saveOrderRequest.getBill().doubleValue());
+        orderEntity.setDiscount(saveOrderRequest.getDiscount().doubleValue());
+        orderEntity.setAddress(addressEntity);
+        orderEntity.setCoupon(couponEntity);
+        orderEntity.setDate(ZonedDateTime.now());
+        orderEntity.setPayment(paymentEntity);
+        orderEntity.setCustomer(customerEntity);
+        orderEntity.setRestaurant(restaurantEntity);
+       OrderEntity updatedOrderEntity = orderService.saveOrder(orderEntity);
+       //To save the Order Item Entities
+        if(orderEntity !=null){
+            for(OrderItemEntity orderItemEntity : orderItemEntities){
+                orderItemEntity.setOrder(orderEntity);
+                orderService.saveOrderItem(orderItemEntity);
+            }
+        }
+        SaveOrderResponse saveOrderResponse = new SaveOrderResponse().id(orderEntity.getUuid()).status("ORDER SUCCESSFULLY PLACED");
+        return new ResponseEntity<SaveOrderResponse>(saveOrderResponse,HttpStatus.CREATED);
     }
 
 
@@ -115,8 +163,6 @@ public class OrderController {
         OrderListCustomer orderListCustomer = new OrderListCustomer().id(UUID.fromString(customer.getUuid()))
                 .firstName(customer.getFirstName()).lastName(customer.getLastName()).emailAddress(customer.getEmail())
                 .contactNumber(customer.getContactNumber());
-                
-
                 return orderListCustomer;
     }
 }
