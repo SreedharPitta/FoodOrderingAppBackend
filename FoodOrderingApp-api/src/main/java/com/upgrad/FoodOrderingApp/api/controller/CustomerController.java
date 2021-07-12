@@ -73,7 +73,7 @@ public class CustomerController {
         headers.add("access-token", customerAuthEntity.getAccessToken());
         //To Expose Headers as part of Response
         List<String> header = new ArrayList<String>();
-        header.add("access_token");
+        header.add("access-token");
         headers.setAccessControlExposeHeaders(header);
         return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
     }
