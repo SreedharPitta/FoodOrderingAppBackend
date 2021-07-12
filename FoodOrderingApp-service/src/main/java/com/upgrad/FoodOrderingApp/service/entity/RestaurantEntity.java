@@ -41,7 +41,6 @@ public class RestaurantEntity implements Serializable {
 
 
     @Column(name = "customer_rating")
-    @Size(max = 50)
     @NotNull
     private Double customerRating;
 
