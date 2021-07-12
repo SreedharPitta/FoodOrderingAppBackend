@@ -10,7 +10,8 @@ import java.util.List;
 @Entity
 @Table(name = "category")
 @NamedQueries({
-    @NamedQuery(name = "allCategoriesOrderedByName", query = "select c from CategoryEntity c order by c.categoryName asc")
+        @NamedQuery(name = "categoryByUuid", query = "select c from CategoryEntity c where c.uuid=:uuid"),
+        @NamedQuery(name = "allCategoriesOrderedByName", query = "select c from CategoryEntity c order by c.categoryName asc")
 })
 public class CategoryEntity implements Serializable {
 

@@ -16,10 +16,18 @@ public class CategoryDAO {
     private EntityManager entityManager;
 
     public List<CategoryEntity> getAllCategoriesOrderedByName() {
-        try{
+        try {
             return this.entityManager.createNamedQuery("allCategoriesOrderedByName", CategoryEntity.class).getResultList();
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return Collections.EMPTY_LIST;
+        }
+    }
+
+    public CategoryEntity getCategoryById(String uuid) {
+        try {
+            return this.entityManager.createNamedQuery("categoryByUuid", CategoryEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
         }
     }
 }
