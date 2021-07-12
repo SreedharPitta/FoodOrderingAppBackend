@@ -1,16 +1,21 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
 @NamedQueries({
-
+    @NamedQuery(name = "getOrdersByCustomers", query = "select o from OrderEntity o where o.customer=:customer order by o.date desc")
 })
 public class OrderEntity {
     @Column(name = "ID")
@@ -46,6 +51,7 @@ public class OrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private CustomerEntity customer;
 
@@ -56,8 +62,12 @@ public class OrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private RestaurantEntity restaurant;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<OrderItemEntity> orderItems = new ArrayList<OrderItemEntity>();
 
     public OrderEntity() {
         super();
@@ -157,6 +167,14 @@ public class OrderEntity {
         this.restaurant = restaurant;
     }
 
+    public List<OrderItemEntity> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItemEntity> orderItems) {
+        this.orderItems = orderItems;
+    }
+
     @Override
     public String toString() {
         return "OrderEntity{" +
@@ -170,6 +188,7 @@ public class OrderEntity {
                 ", customer=" + customer +
                 ", address=" + address +
                 ", restaurant=" + restaurant +
+                ", orderItems=" + orderItems +
                 '}';
     }
 }

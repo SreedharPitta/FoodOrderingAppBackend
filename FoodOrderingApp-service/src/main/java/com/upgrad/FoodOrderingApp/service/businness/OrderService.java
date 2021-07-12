@@ -1,7 +1,9 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CouponDAO;
+import com.upgrad.FoodOrderingApp.service.dao.OrderDAO;
 import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
 import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
@@ -14,7 +16,13 @@ import java.util.List;
 public class OrderService {
 
     @Autowired
+    private CustomerService customerService;
+
+    @Autowired
     private CouponDAO couponDAO;
+
+    @Autowired
+    private OrderDAO orderDAO;
 
     public OrderEntity saveOrder(OrderEntity orderEntity) {
         return null;
@@ -24,14 +32,11 @@ public class OrderService {
         return null;
     }
 
-    public List<OrderEntity> getOrdersByCustomers(String customerId) {
-        return null;
-    }
-
     public CouponEntity getCouponByCouponId(String couponId) {
         return null;
     }
 
+    //To get Coupon by Name
     public CouponEntity getCouponByCouponName(String couponName) throws CouponNotFoundException {
         if (couponName == null || couponName.isEmpty()) {
             throw new CouponNotFoundException("CPF-002", "Coupon name field should not be empty");
@@ -40,6 +45,12 @@ public class OrderService {
         if (couponEntity == null) {
             throw new CouponNotFoundException("CPF-001", "No coupon by this name");
         }
-        return null;
+        return couponEntity;
+    }
+
+    //To get Customer Orders
+    public List<OrderEntity> getOrdersByCustomers(String customerUuid) {
+        CustomerEntity customerEntity = customerService.getCustomerByUuid(customerUuid);
+        return orderDAO.getOrdersByCustomers(customerEntity);
     }
 }

@@ -122,4 +122,8 @@ public class CustomerService {
         }
         return customerAuthEntity.getCustomer();
     }
+
+    public CustomerEntity getCustomerByUuid(String customerUuid) {
+        return customerDAO.getCustomerByUuid(customerUuid);
+    }
 }
