@@ -22,7 +22,7 @@ public class CustomerAuthDAO {
     //To get the Logged In customer Auth Token
     public CustomerAuthEntity getCustomerAuthToken(String accessToken) {
         try {
-            return entityManager.createNamedQuery("customerAuthByAccessToken", CustomerAuthEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+            return this.entityManager.createNamedQuery("customerAuthByAccessToken", CustomerAuthEntity.class).setParameter("accessToken", accessToken).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

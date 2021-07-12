@@ -423,7 +423,7 @@ public class CustomerControllerTest {
                 .perform(put("/customer/password")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .header("authorization", "Bearer auth")
-                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd@123\"}"))
+                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
@@ -441,7 +441,7 @@ public class CustomerControllerTest {
                 .perform(put("/customer/password")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .header("authorization", "Bearer auth")
-                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd@123\"}"))
+                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-002"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
@@ -459,7 +459,7 @@ public class CustomerControllerTest {
                 .perform(put("/customer/password")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .header("authorization", "Bearer auth")
-                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd@123\"}"))
+                        .content("{\"old_password\":\"oldPwd\", \"new_password\":\"newPwd\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-003"));
         verify(mockCustomerService, times(1)).getCustomer("auth");

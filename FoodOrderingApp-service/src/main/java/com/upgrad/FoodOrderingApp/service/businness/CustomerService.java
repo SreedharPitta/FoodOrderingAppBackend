@@ -1,6 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.common.CommonUtilsValidator;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDAO;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
@@ -16,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -29,13 +30,19 @@ public class CustomerService {
     @Autowired
     private CustomerAuthDAO customerAuthDAO;
 
-    @Autowired
-    private CommonUtilsValidator commonUtilsValidator;
-
     //Customer Signup Functionality
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity saveCustomer(CustomerEntity customerEntity) throws SignUpRestrictedException {
-        commonUtilsValidator.validateSignUpRequest(customerEntity);
+    public CustomerEntity saveCustomer(final CustomerEntity customerEntity) throws SignUpRestrictedException {
+
+        if (!verifyValidEmail(customerEntity.getEmail())) {
+            throw new SignUpRestrictedException("SGR-002", "Invalid email-id format!");
+        }
+        if (!verifyValidContactNumber(customerEntity.getPassword())) {
+            throw new SignUpRestrictedException("SGR-003", "Invalid contact number!");
+        }
+        if (!verifyStrongPassword(customerEntity.getPassword())) {
+            throw new SignUpRestrictedException("SGR-004", "Weak password!");
+        }
         CustomerEntity existingCustomerEntity = customerDAO.getCustomerByContactNumber(customerEntity.getContactNumber());
         if (existingCustomerEntity != null) {
             throw new SignUpRestrictedException("SGR-001", "This contact number is already registered! Try other contact number.");
@@ -45,6 +52,7 @@ public class CustomerService {
         customerEntity.setSalt(encryptedText[0]);
         customerEntity.setPassword(encryptedText[1]);
         return customerDAO.createCustomer(customerEntity);
+
     }
 
     //Customer Login Functionality
@@ -57,7 +65,6 @@ public class CustomerService {
         }
         final String encryptedInputPassword = passwordCryptographyProvider.encrypt(password, customerEntity.getSalt());
         if (!encryptedInputPassword.equals(customerEntity.getPassword())) {
-            System.out.println("==== Passwords Doesn't Match ======");
             throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
         }
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedInputPassword);
@@ -69,7 +76,6 @@ public class CustomerService {
         customerAuthEntity.setAccessToken(jwtTokenProvider.generateToken(customerEntity.getUuid(), now, expiresAt));
         customerAuthEntity.setLoginAt(now);
         customerAuthEntity.setExpiresAt(expiresAt);
-        System.out.println("======== Customer Auth =======" + customerAuthEntity);
         return customerAuthDAO.createCustomerAuth(customerAuthEntity);
     }
 
@@ -78,7 +84,7 @@ public class CustomerService {
     public CustomerAuthEntity logout(String accessToken) throws AuthorizationFailedException {
         CustomerEntity customerEntity = getCustomer(accessToken);
         CustomerAuthEntity customerAuthEntity = customerAuthDAO.getCustomerAuthToken(accessToken);
-        customerAuthEntity.setExpiresAt(ZonedDateTime.now());
+        //customerAuthEntity.setExpiresAt(ZonedDateTime.now());
         customerAuthEntity.setLogoutAt(ZonedDateTime.now());
         CustomerAuthEntity updatedCustomerAuthEntity = customerAuthDAO.updateCustomerAuth(customerAuthEntity);
         return updatedCustomerAuthEntity;
@@ -91,8 +97,9 @@ public class CustomerService {
     }
 
     //To Update Password of the Customer
+    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomerPassword(String oldPassword, String newPassword, CustomerEntity customerEntity) throws UpdateCustomerException, AuthorizationFailedException {
-        if (!commonUtilsValidator.verifyStrongPassword(newPassword)) {
+        if (!verifyStrongPassword(newPassword)) {
             throw new UpdateCustomerException("UCR-001", "Weak password!");
         }
         String oldPasswordEncrypted = passwordCryptographyProvider.encrypt(oldPassword, customerEntity.getSalt());
@@ -107,6 +114,7 @@ public class CustomerService {
     }
 
     //Customer Auth Token Functionality
+    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerAuthDAO.getCustomerAuthToken(accessToken);
         if (customerAuthEntity == null) {
@@ -123,7 +131,29 @@ public class CustomerService {
         return customerAuthEntity.getCustomer();
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity getCustomerByUuid(String customerUuid) {
         return customerDAO.getCustomerByUuid(customerUuid);
+    }
+
+    //To validate User Input Email
+    public boolean verifyValidEmail(String emailAddress) {
+        return emailAddress.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$");
+    }
+
+    //To validate User Contact No.
+    public boolean verifyValidContactNumber(String contactNumber) {
+        boolean validContactNumber = false;
+        Pattern p = Pattern.compile("(0/91)?[7-9][0-9]{9}");
+        Matcher m = p.matcher(contactNumber);
+        if (m.find() && m.group().equals(contactNumber)) {
+            validContactNumber = true;
+        }
+        return validContactNumber;
+    }
+
+    //To Validate Password according to given rules
+    public boolean verifyStrongPassword(String password) {
+        return password.matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$");
     }
 }

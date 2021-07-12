@@ -16,7 +16,7 @@ public class CustomerDAO {
     //To get the Customer by Contact No.
     public CustomerEntity getCustomerByContactNumber(String contactNumber) {
         try {
-            return entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactNumber", contactNumber)
+            return this.entityManager.createNamedQuery("customerByContactNumber", CustomerEntity.class).setParameter("contactNumber", contactNumber)
                     .getSingleResult();
         } catch (NoResultException nre) {
             return null;
@@ -37,7 +37,7 @@ public class CustomerDAO {
 
     public CustomerEntity getCustomerByUuid(String uuid) {
         try {
-            return entityManager.createNamedQuery("customerByUuid", CustomerEntity.class).setParameter("uuid", uuid)
+            return this.entityManager.createNamedQuery("customerByUuid", CustomerEntity.class).setParameter("uuid", uuid)
                     .getSingleResult();
         } catch (NoResultException nre) {
             return null;

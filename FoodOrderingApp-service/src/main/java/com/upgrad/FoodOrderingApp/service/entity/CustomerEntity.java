@@ -9,8 +9,8 @@ import java.io.Serializable;
 @Table(name = "customer")
 @NamedQueries({
         @NamedQuery(name = "customerByUuid", query = "select c from CustomerEntity c where c.uuid = :uuid"),
-        @NamedQuery(name="customerByContactNumber", query = "select c from CustomerEntity c where c.contactNumber=:contactNumber"),
-        @NamedQuery(name="customerByEmail", query = "select c from CustomerEntity c where c.email=:email")
+        @NamedQuery(name = "customerByContactNumber", query = "select c from CustomerEntity c where c.contactNumber=:contactNumber"),
+        @NamedQuery(name = "customerByEmail", query = "select c from CustomerEntity c where c.email=:email")
 })
 public class CustomerEntity implements Serializable {
 
@@ -53,6 +53,10 @@ public class CustomerEntity implements Serializable {
     @NotNull
     @Size(max = 255)
     private String salt;
+
+    public CustomerEntity() {
+        super();
+    }
 
     public Integer getId() {
         return id;

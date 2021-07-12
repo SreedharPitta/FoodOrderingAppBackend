@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
 @CrossOrigin
+@RestController
 @RequestMapping("/")
 public class AddressController {
 
