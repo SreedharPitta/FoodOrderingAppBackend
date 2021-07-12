@@ -14,6 +14,11 @@ public class RestaurantService {
     @Autowired
     private RestaurantDAO restaurantDAO;
 
+    //This will get all restaurants in order of their rating
+    public List<RestaurantEntity> getAllRestaurantsByRating() {
+        return  restaurantDAO.getAllRestaurantsByRating();
+    }
+
     public RestaurantEntity restaurantByUUID(String uuid) throws RestaurantNotFoundException {
         RestaurantEntity restaurantEntity = restaurantDAO.getRestaurantByUUID(uuid);
         if (restaurantEntity == null) {

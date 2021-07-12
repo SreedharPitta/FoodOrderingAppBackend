@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class RestaurantDAO {
@@ -20,5 +22,13 @@ public class RestaurantDAO {
             return null;
         }
 
+    }
+
+    public List<RestaurantEntity> getAllRestaurantsByRating() {
+        try {
+            return this.entityManager.createNamedQuery("allRestaurantsByRating", RestaurantEntity.class).getResultList();
+        }catch (NoResultException nre){
+            return Collections.EMPTY_LIST;
+        }
     }
 }

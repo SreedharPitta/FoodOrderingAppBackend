@@ -11,7 +11,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "restaurant")
 @NamedQueries({
-        @NamedQuery(name = "restaurantByUUID", query = "select r from RestaurantEntity r where r.uuid=:uuid")
+        @NamedQuery(name = "restaurantByUUID", query = "select r from RestaurantEntity r where r.uuid=:uuid"),
+        @NamedQuery(name = "allRestaurantsByRating", query = "select r from RestaurantEntity r order by r.customerRating desc")
 })
 public class RestaurantEntity implements Serializable {
 

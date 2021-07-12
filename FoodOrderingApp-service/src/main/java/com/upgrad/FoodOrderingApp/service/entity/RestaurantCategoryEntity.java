@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "restaurant_category")
 @NamedQueries({
-
+    @NamedQuery(name = "categoriesByRestaurant", query = "select rc from RestaurantCategoryEntity rc where rc.restaurant=:restaurant")
 })
 public class RestaurantCategoryEntity implements Serializable {
 
