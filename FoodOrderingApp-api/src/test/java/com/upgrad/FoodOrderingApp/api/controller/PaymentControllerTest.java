@@ -56,5 +56,4 @@ public class PaymentControllerTest {
         assertEquals(paymentResponses.getPaymentMethods().get(0).getPaymentName(), "samplePaymentName");
         verify(mockPaymentService, times(1)).getAllPaymentMethods();
     }
-
 }
