@@ -17,20 +17,4 @@ public class RestaurantCategoryDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<RestaurantCategoryEntity> getCategoriesByRestaurant(RestaurantEntity restaurant) {
-        try {
-            return this.entityManager.createNamedQuery("categoriesByRestaurant", RestaurantCategoryEntity.class).setParameter("restaurant", restaurant).getResultList();
-        } catch (NoResultException nre) {
-            return Collections.emptyList();
-        }
-
-    }
-
-    public List<RestaurantCategoryEntity> getRestaurantByCategory(CategoryEntity categoryEntity) {
-        try {
-            return this.entityManager.createNamedQuery("restaurantsByCategory", RestaurantCategoryEntity.class).setParameter("category", categoryEntity).getResultList();
-        }catch (NoResultException nre){
-            return Collections.emptyList();
-        }
-    }
 }

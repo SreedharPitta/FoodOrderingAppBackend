@@ -17,16 +17,27 @@ public class RestaurantDAO {
 
     public RestaurantEntity getRestaurantByUUID(String uuid) {
         try {
-            return this.entityManager.createNamedQuery("restaurantByUUID", RestaurantEntity.class).setParameter("uuid", uuid).getSingleResult();
+            return entityManager.createNamedQuery("restaurantByUUID", RestaurantEntity.class).setParameter("uuid", uuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
 
     }
 
+    public List<RestaurantEntity> restaurantByCategory(String categoryUuid) {
+        try{
+            return entityManager
+                    .createNamedQuery("restaurantByCategory", RestaurantEntity.class)
+                    .setParameter("categoryUuid", categoryUuid)
+                    .getResultList();
+        }catch (NoResultException nre){
+            return Collections.emptyList();
+        }
+    }
+
     public List<RestaurantEntity> getAllRestaurantsByRating() {
         try {
-            return this.entityManager.createNamedQuery("allRestaurantsByRating", RestaurantEntity.class).getResultList();
+            return entityManager.createNamedQuery("allRestaurantsByRating", RestaurantEntity.class).getResultList();
         }catch (NoResultException nre){
             return Collections.EMPTY_LIST;
         }
@@ -34,13 +45,14 @@ public class RestaurantDAO {
 
     public List<RestaurantEntity> restaurantsByName(String searchName) {
         try{
-            return this.entityManager.createNamedQuery("restaurantsByName", RestaurantEntity.class).setParameter("searchName", "%" + searchName + "%").getResultList();
+            return entityManager.createNamedQuery("restaurantsByName", RestaurantEntity.class).setParameter("searchName", "%" + searchName + "%").getResultList();
         }catch (NoResultException nre){
             return Collections.emptyList();
         }
     }
 
-    public RestaurantEntity updateRestaurant(RestaurantEntity restaurantEntity) {
-        return entityManager.merge(restaurantEntity);
+    public RestaurantEntity updateRestaurant(final RestaurantEntity restaurantEntity) {
+        RestaurantEntity updatedRestaurantEntity = entityManager.merge(restaurantEntity);
+        return updatedRestaurantEntity;
     }
 }

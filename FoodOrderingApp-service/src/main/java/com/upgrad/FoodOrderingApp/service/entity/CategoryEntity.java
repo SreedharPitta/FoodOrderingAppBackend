@@ -11,7 +11,8 @@ import java.util.List;
 @Table(name = "category")
 @NamedQueries({
         @NamedQuery(name = "categoryByUuid", query = "select c from CategoryEntity c where c.uuid=:uuid"),
-        @NamedQuery(name = "allCategoriesOrderedByName", query = "select c from CategoryEntity c order by c.categoryName asc")
+        @NamedQuery(name = "allCategoriesOrderedByName", query = "select c from CategoryEntity c order by c.categoryName asc"),
+        @NamedQuery(name = "categoriesByRestaurant", query = "select c from CategoryEntity c where c.id in (select rc.categoryId from RestaurantCategoryEntity rc where rc.restaurantId = (select r.id from RestaurantEntity r where r.uuid=:restaurantUuid) )  order by c.categoryName")
 })
 public class CategoryEntity implements Serializable {
 

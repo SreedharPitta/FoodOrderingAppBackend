@@ -28,14 +28,8 @@ public class CategoryService {
     private RestaurantService restaurantService;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<CategoryEntity> getCategoriesByRestaurant(String restaurantId) throws RestaurantNotFoundException {
-        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
-        List<RestaurantCategoryEntity> restaurantCategoryEntities = restaurantCategoryDAO.getCategoriesByRestaurant(restaurantEntity);
-        List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();
-        for (RestaurantCategoryEntity restaurantCategoryEntity : restaurantCategoryEntities) {
-            categoryEntities.add(restaurantCategoryEntity.getCategory());
-        }
-        //To Do sort this in the order of Category Name
+    public List<CategoryEntity> getCategoriesByRestaurant(String restaurantId) {
+        List<CategoryEntity> categoryEntities = categoryDAO.getCategoriesByRestaurant(restaurantId);
         return categoryEntities;
     }
 

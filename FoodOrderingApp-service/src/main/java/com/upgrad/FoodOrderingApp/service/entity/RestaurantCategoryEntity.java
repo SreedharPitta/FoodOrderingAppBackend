@@ -10,10 +10,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "restaurant_category")
-@NamedQueries({
-    @NamedQuery(name = "restaurantsByCategory", query = "select rc from RestaurantCategoryEntity rc where rc.category=:category"),
-    @NamedQuery(name = "categoriesByRestaurant", query = "select rc from RestaurantCategoryEntity rc where rc.restaurant=:restaurant")
-})
 public class RestaurantCategoryEntity implements Serializable {
 
     @Column(name = "ID")
@@ -21,17 +17,12 @@ public class RestaurantCategoryEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "restaurant_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private RestaurantEntity restaurant;
+    @Column(name = "restaurant_id")
+    private Integer restaurantId;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "category_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private CategoryEntity category;
+    @Column(name = "category_id")
+    private Integer categoryId;
 
     public Integer getId() {
         return id;
@@ -41,28 +32,28 @@ public class RestaurantCategoryEntity implements Serializable {
         this.id = id;
     }
 
-    public RestaurantEntity getRestaurant() {
-        return restaurant;
+    public Integer getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setRestaurant(RestaurantEntity restaurant) {
-        this.restaurant = restaurant;
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
-    public CategoryEntity getCategory() {
-        return category;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
     public String toString() {
         return "RestaurantCategoryEntity{" +
                 "id=" + id +
-                ", restaurant=" + restaurant +
-                ", category=" + category +
+                ", restaurantId=" + restaurantId +
+                ", categoryId=" + categoryId +
                 '}';
     }
 }

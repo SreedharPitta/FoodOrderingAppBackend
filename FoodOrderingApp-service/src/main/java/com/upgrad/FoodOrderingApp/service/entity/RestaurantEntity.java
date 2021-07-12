@@ -13,7 +13,8 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name = "restaurantByUUID", query = "select r from RestaurantEntity r where r.uuid=:uuid"),
         @NamedQuery(name = "allRestaurantsByRating", query = "select r from RestaurantEntity r order by r.customerRating desc"),
-        @NamedQuery(name = "restaurantsByName", query = "select r from RestaurantEntity r where lower(r.restaurantName) like lower(:searchName) order by r.restaurantName asc")
+        @NamedQuery(name = "restaurantsByName", query = "select r from RestaurantEntity r where lower(r.restaurantName) like lower(:searchName) order by r.restaurantName asc"),
+        @NamedQuery(name = "restaurantByCategory", query = "select r from RestaurantEntity r where r.id in (select rc.restaurantId from RestaurantCategoryEntity rc where rc.categoryId = (select c.id from CategoryEntity c where c.uuid=:categoryUuid) ) order by r.restaurantName")
 })
 public class RestaurantEntity implements Serializable {
 

@@ -30,4 +30,15 @@ public class CategoryDAO {
             return null;
         }
     }
+
+    public List<CategoryEntity> getCategoriesByRestaurant(String restaurantId) {
+        try {
+            return this.entityManager
+                    .createNamedQuery("categoriesByRestaurant", CategoryEntity.class)
+                    .setParameter("restaurantUuid", restaurantId)
+                    .getResultList();
+        } catch (NoResultException nre) {
+            return Collections.emptyList();
+        }
+    }
 }

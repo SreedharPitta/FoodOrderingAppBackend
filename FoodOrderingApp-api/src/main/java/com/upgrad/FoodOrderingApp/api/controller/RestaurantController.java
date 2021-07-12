@@ -39,14 +39,16 @@ public class RestaurantController {
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getAllRestaurants() throws RestaurantNotFoundException {
         List<RestaurantEntity> restaurantEntities = restaurantService.restaurantsByRating();
-        RestaurantListResponse restaurantListResponse = getRestaurantListResponse(restaurantEntities);
+        List<RestaurantList> restaurantLists = getRestaurantLists(restaurantEntities);
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/name/{restaurant_name}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantsByName(@PathVariable("restaurant_name") final String restaurantName) throws RestaurantNotFoundException {
         List<RestaurantEntity> restaurantEntities = restaurantService.restaurantsByName(restaurantName);
-        RestaurantListResponse restaurantListResponse = getRestaurantListResponse(restaurantEntities);
+        List<RestaurantList> restaurantLists = getRestaurantLists(restaurantEntities);
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
@@ -54,7 +56,8 @@ public class RestaurantController {
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/category/{category_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantsByCategoryId(@PathVariable("category_id") final String categoryId) throws RestaurantNotFoundException, CategoryNotFoundException {
         List<RestaurantEntity> restaurantEntities = restaurantService.restaurantByCategory(categoryId);
-        RestaurantListResponse restaurantListResponse = getRestaurantListResponse(restaurantEntities);
+        List<RestaurantList> restaurantLists = getRestaurantLists(restaurantEntities);
+        RestaurantListResponse restaurantListResponse = new RestaurantListResponse().restaurants(restaurantLists);
         return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
     }
 
@@ -76,26 +79,24 @@ public class RestaurantController {
 
 
     @RequestMapping(method = RequestMethod.PUT, path = "/restaurant/{restaurant_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<RestaurantUpdatedResponse> updateRestaurantDetails(@RequestHeader("authorization") final String authorizationToken, @PathVariable("restaurant_id") final String restaurantId, @RequestParam(required = false) final Double customerRating) throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
+    public ResponseEntity<RestaurantUpdatedResponse> updateRestaurantDetails(@RequestHeader("authorization") final String authorizationToken, @PathVariable("restaurant_id") final String restaurantId, @RequestParam("customer_rating") final Double customerRating) throws AuthorizationFailedException, RestaurantNotFoundException, InvalidRatingException {
         String accessToken = authorizationToken.split("Bearer ")[1];
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
-        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
-        RestaurantEntity updatedRestaurantEntity = restaurantService.updateRestaurantRating(restaurantEntity,customerRating);
+        final RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
+        RestaurantEntity updatedRestaurantEntity = restaurantService.updateRestaurantRating(restaurantEntity, customerRating);
         RestaurantUpdatedResponse restaurantUpdatedResponse = new RestaurantUpdatedResponse().id(UUID.fromString(updatedRestaurantEntity.getUuid()))
                 .status("RESTAURANT RATING UPDATED SUCCESSFULLY");
         return new ResponseEntity<RestaurantUpdatedResponse>(restaurantUpdatedResponse, HttpStatus.OK);
     }
 
 
-    private RestaurantListResponse getRestaurantListResponse(List<RestaurantEntity> restaurantEntities) throws RestaurantNotFoundException {
-        RestaurantListResponse restaurantListResponse = new RestaurantListResponse();
+    private List<RestaurantList> getRestaurantLists(List<RestaurantEntity> restaurantEntities) throws RestaurantNotFoundException {
         List<RestaurantList> restaurantLists = new ArrayList<RestaurantList>();
         for (RestaurantEntity restaurantEntity : restaurantEntities) {
             RestaurantList restaurantList = getRestaurantListItem(restaurantEntity);
             restaurantLists.add(restaurantList);
         }
-        restaurantListResponse.restaurants(restaurantLists);
-        return restaurantListResponse;
+        return restaurantLists;
     }
 
 
@@ -127,15 +128,15 @@ public class RestaurantController {
     private List<CategoryList> getRestaurantResponseDetailsCategories(RestaurantEntity restaurantEntity) throws RestaurantNotFoundException {
         List<CategoryList> categoryLists = new ArrayList<CategoryList>();
         List<CategoryEntity> categoryEntities = categoryService.getCategoriesByRestaurant(restaurantEntity.getUuid());
-        for(CategoryEntity categoryEntity : categoryEntities){
+        for (CategoryEntity categoryEntity : categoryEntities) {
             List<ItemList> itemLists = new ArrayList<ItemList>();
-            for(ItemEntity item : categoryEntity.getItems()){
+            for (ItemEntity item : categoryEntity.getItems()) {
                 ItemList itemList = new ItemList().id(UUID.fromString(item.getUuid()))
                         .itemName(item.getItemName())
                         .price(item.getPrice());
-                if(ItemType.VEG.equals(item.getType())){
+                if (ItemType.VEG.equals(item.getType())) {
                     itemList.setItemType(ItemList.ItemTypeEnum.VEG);
-                }else if(ItemType.NON_VEG.equals(item.getType())){
+                } else if (ItemType.NON_VEG.equals(item.getType())) {
                     itemList.setItemType(ItemList.ItemTypeEnum.NON_VEG);
                 }
                 itemLists.add(itemList);
