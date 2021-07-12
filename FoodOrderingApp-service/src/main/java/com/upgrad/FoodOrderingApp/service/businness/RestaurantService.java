@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -68,9 +67,10 @@ public class RestaurantService {
         if (customerRating == null || customerRating.isNaN() || customerRating < 1 || customerRating > 5) {
             throw new InvalidRatingException("IRE-001", "Restaurant should be in the range of 1 to 5");
         }
-        BigDecimal oldRatingCalculation = (new BigDecimal(restaurantEntity.getCustomerRating()).multiply(new BigDecimal(restaurantEntity.getNumberCustomersRated())));
-        BigDecimal calculatedRating = (oldRatingCalculation.add(new BigDecimal(customerRating))).divide(new BigDecimal(restaurantEntity.getNumberCustomersRated() + 1));
-        restaurantEntity.setCustomerRating(calculatedRating.doubleValue());
+        Double oldRating = restaurantEntity.getCustomerRating();
+        Integer numberCustomersRated = restaurantEntity.getNumberCustomersRated();
+        Double newRating = ((oldRating * numberCustomersRated) + customerRating) / (numberCustomersRated + 1);
+        restaurantEntity.setCustomerRating(newRating);
         restaurantEntity.setNumberCustomersRated(restaurantEntity.getNumberCustomersRated() + 1);
         return restaurantDAO.updateRestaurant(restaurantEntity);
     }
