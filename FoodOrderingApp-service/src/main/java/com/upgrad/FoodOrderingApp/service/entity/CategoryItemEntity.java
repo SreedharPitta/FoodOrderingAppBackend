@@ -1,17 +1,11 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "category_item")
-@NamedQueries({
-
-})
 public class CategoryItemEntity implements Serializable {
 
     @Column(name = "ID")
@@ -19,16 +13,12 @@ public class CategoryItemEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @Column(name = "item_id")
     @NotNull
-    @JoinColumn(name = "item_id")
-    private ItemEntity item;
+    private Integer itemId;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "category_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private CategoryEntity category;
+    @Column(name = "category_id")
+    private Integer categoryId;
 
     public Integer getId() {
         return id;
@@ -38,28 +28,28 @@ public class CategoryItemEntity implements Serializable {
         this.id = id;
     }
 
-    public ItemEntity getItem() {
-        return item;
+    public Integer getItemId() {
+        return itemId;
     }
 
-    public void setItem(ItemEntity item) {
-        this.item = item;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
-    public CategoryEntity getCategory() {
-        return category;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
     public String toString() {
         return "CategoryItemEntity{" +
                 "id=" + id +
-                ", item=" + item +
-                ", category=" + category +
+                ", itemId=" + itemId +
+                ", categoryId=" + categoryId +
                 '}';
     }
 }

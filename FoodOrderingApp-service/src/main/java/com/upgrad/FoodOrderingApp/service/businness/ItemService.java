@@ -23,7 +23,7 @@ public class ItemService {
     private RestaurantItemDAO restaurantItemDAO;
 
     public List<ItemEntity> getItemsByCategoryAndRestaurant(String restaurantId, String categoryId){
-        return null;
+        return itemDAO.getItemsByCategoryAndRestaurant(restaurantId, categoryId);
     }
 
     public List<ItemEntity> getItemsByPopularity(RestaurantEntity restaurantEntity){

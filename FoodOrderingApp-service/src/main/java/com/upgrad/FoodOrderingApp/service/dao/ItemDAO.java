@@ -17,9 +17,9 @@ public class ItemDAO {
     private EntityManager entityManager;
 
     public List<ItemEntity> getPopularItemsByRestaurant(RestaurantEntity restaurantEntity) {
-        try{
+        try {
             return null;
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return Collections.emptyList();
         }
     }
@@ -27,8 +27,20 @@ public class ItemDAO {
     public ItemEntity getItemByUuid(String uuid) {
         try {
             return this.entityManager.createNamedQuery("itemByUuid", ItemEntity.class).setParameter("uuid", uuid).getSingleResult();
-        }catch (NoResultException nre){
+        } catch (NoResultException nre) {
             return null;
+        }
+    }
+
+    public List<ItemEntity> getItemsByCategoryAndRestaurant(String restaurantId, String categoryId) {
+        try {
+            return this.entityManager
+                    .createNamedQuery("allItemsByCategoryAndRestaurant", ItemEntity.class)
+                    .setParameter("restaurantId", restaurantId)
+                    .setParameter("categoryId", categoryId)
+                    .getResultList();
+        } catch (NoResultException nre) {
+            return Collections.emptyList();
         }
     }
 }

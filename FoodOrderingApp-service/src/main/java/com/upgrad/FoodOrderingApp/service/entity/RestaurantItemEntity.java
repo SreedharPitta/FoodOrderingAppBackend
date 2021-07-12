@@ -1,8 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,17 +13,12 @@ public class RestaurantItemEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @Column(name = "item_id")
     @NotNull
-    @JoinColumn(name = "item_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ItemEntity item;
+    private Integer itemId;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "restaurant_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private RestaurantEntity restaurant;
+    @Column(name = "restaurant_id")
+    private Integer restaurantId;
 
     public Integer getId() {
         return id;
@@ -36,28 +28,28 @@ public class RestaurantItemEntity implements Serializable {
         this.id = id;
     }
 
-    public ItemEntity getItem() {
-        return item;
+    public Integer getItemId() {
+        return itemId;
     }
 
-    public void setItem(ItemEntity item) {
-        this.item = item;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
-    public RestaurantEntity getRestaurant() {
-        return restaurant;
+    public Integer getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setRestaurant(RestaurantEntity restaurant) {
-        this.restaurant = restaurant;
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     @Override
     public String toString() {
         return "RestaurantItemEntity{" +
                 "id=" + id +
-                ", item=" + item +
-                ", restaurant=" + restaurant +
+                ", itemId=" + itemId +
+                ", restaurantId=" + restaurantId +
                 '}';
     }
 }

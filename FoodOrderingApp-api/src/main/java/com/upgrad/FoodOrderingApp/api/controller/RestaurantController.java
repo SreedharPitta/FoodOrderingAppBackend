@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CategoryService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.businness.ItemService;
 import com.upgrad.FoodOrderingApp.service.businness.RestaurantService;
 import com.upgrad.FoodOrderingApp.service.common.ItemType;
 import com.upgrad.FoodOrderingApp.service.entity.*;
@@ -35,6 +36,8 @@ public class RestaurantController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private ItemService itemService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getAllRestaurants() throws RestaurantNotFoundException {
@@ -73,7 +76,7 @@ public class RestaurantController {
                 .averagePrice(restaurantEntity.getAvgPrice())
                 .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
                 .address(getRestaurantDetailsResponseAddress(restaurantEntity.getAddress()))
-                .categories(getRestaurantResponseDetailsCategories(restaurantEntity));
+                .categories(getRestaurantResponseDetailsCategories(restaurantId));
         return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse, HttpStatus.OK);
     }
 
@@ -125,12 +128,13 @@ public class RestaurantController {
         return restaurantList;
     }
 
-    private List<CategoryList> getRestaurantResponseDetailsCategories(RestaurantEntity restaurantEntity) throws RestaurantNotFoundException {
+    private List<CategoryList> getRestaurantResponseDetailsCategories(String restaurantUuid) throws RestaurantNotFoundException {
         List<CategoryList> categoryLists = new ArrayList<CategoryList>();
-        List<CategoryEntity> categoryEntities = categoryService.getCategoriesByRestaurant(restaurantEntity.getUuid());
+        List<CategoryEntity> categoryEntities = categoryService.getCategoriesByRestaurant(restaurantUuid);
         for (CategoryEntity categoryEntity : categoryEntities) {
             List<ItemList> itemLists = new ArrayList<ItemList>();
-            for (ItemEntity item : categoryEntity.getItems()) {
+            List<ItemEntity> itemEntities = itemService.getItemsByCategoryAndRestaurant(restaurantUuid, categoryEntity.getUuid());
+            for (ItemEntity item : itemEntities) {
                 ItemList itemList = new ItemList().id(UUID.fromString(item.getUuid()))
                         .itemName(item.getItemName())
                         .price(item.getPrice());
