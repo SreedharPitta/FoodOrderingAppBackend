@@ -50,8 +50,21 @@ public class AddressController {
 
     //End point to get all saved addresses
     @RequestMapping(method = RequestMethod.GET, path = "/address/customer", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<AddressListResponse> getAllSavedAddresses(@RequestHeader("authorization") final String authorizationToken) {
-        AddressListResponse addressListResponse = new AddressListResponse();
+    public ResponseEntity<AddressListResponse> getAllSavedAddresses(@RequestHeader("authorization") final String authorizationToken) throws AuthorizationFailedException {
+        final String accessToken = authorizationToken.split("Bearer ")[1];
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        List<AddressEntity> addressEntities = addressService.getAllAddress(customerEntity);
+        List<AddressList> addressLists = new ArrayList<AddressList>();
+        for(AddressEntity addressEntity : addressEntities){
+            AddressList addressList = new AddressList().id(UUID.fromString(addressEntity.getUuid()))
+                    .flatBuildingName(addressEntity.getFlatBuilNo())
+                    .locality(addressEntity.getLocality())
+                    .city(addressEntity.getCity())
+                    .pincode(addressEntity.getPincode())
+                    .state(new AddressListState().id(UUID.fromString(addressEntity.getState().getUuid())).stateName(addressEntity.getState().getStateName()));
+        addressLists.add(addressList);
+        }
+        AddressListResponse addressListResponse = new AddressListResponse().addresses(addressLists);
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
     }
 

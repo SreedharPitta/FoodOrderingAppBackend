@@ -12,6 +12,7 @@ import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,12 +39,16 @@ public class AddressService {
         customerAddressEntity.setAddress(addressEntity);
         customerAddressEntity.setCustomer(customerEntity);
         customerAddressDAO.saveCustomerAddress(customerAddressEntity);
-
         return null;
     }
 
     public List<AddressEntity> getAllAddress(final CustomerEntity customerEntity) {
-        return null;
+        List<AddressEntity> addressEntities = new ArrayList<AddressEntity>();
+        List<CustomerAddressEntity> customerAddressEntities = customerAddressDAO.getAllAddress(customerEntity);
+        for(CustomerAddressEntity customerAddressEntity : customerAddressEntities){
+            addressEntities.add(customerAddressEntity.getAddress());
+        }
+        return addressEntities;
     }
 
     public AddressEntity deleteAddress(final AddressEntity addressEntity) {
