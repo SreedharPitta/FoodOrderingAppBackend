@@ -29,7 +29,6 @@ public class OrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "coupon_id")
-    @NotNull
     private CouponEntity coupon;
 
     @Column(name = "discount")

@@ -26,6 +26,7 @@ public class CouponEntity {
     private String couponName;
 
     @Column(name = "percent")
+    @NotNull
     private Integer percent;
 
     public CouponEntity() {
