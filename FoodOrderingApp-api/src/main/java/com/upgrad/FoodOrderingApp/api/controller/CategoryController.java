@@ -30,11 +30,14 @@ public class CategoryController {
     @RequestMapping(method = RequestMethod.GET, path = "/category", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoriesListResponse> getAllCategories() {
         List<CategoryEntity> categoryEntities = categoryService.getAllCategoriesOrderedByName();
-        List<CategoryListResponse> categoryListResponses = new ArrayList<CategoryListResponse>();
-        for (CategoryEntity categoryEntity : categoryEntities) {
-            CategoryListResponse categoryListResponse = new CategoryListResponse().id(UUID.fromString(categoryEntity.getUuid()))
-                    .categoryName(categoryEntity.getCategoryName());
-            categoryListResponses.add(categoryListResponse);
+        List<CategoryListResponse> categoryListResponses = null;
+        if (!categoryEntities.isEmpty()) {
+            categoryListResponses = new ArrayList<CategoryListResponse>();
+            for (CategoryEntity categoryEntity : categoryEntities) {
+                CategoryListResponse categoryListResponse = new CategoryListResponse().id(UUID.fromString(categoryEntity.getUuid()))
+                        .categoryName(categoryEntity.getCategoryName());
+                categoryListResponses.add(categoryListResponse);
+            }
         }
         CategoriesListResponse categoriesListResponse = new CategoriesListResponse().categories(categoryListResponses);
         return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);

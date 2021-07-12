@@ -9,6 +9,8 @@ import com.upgrad.FoodOrderingApp.service.exception.CategoryNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +27,19 @@ public class CategoryService {
     @Autowired
     private RestaurantService restaurantService;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<CategoryEntity> getCategoriesByRestaurant(String restaurantId) throws RestaurantNotFoundException {
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
         List<RestaurantCategoryEntity> restaurantCategoryEntities = restaurantCategoryDAO.getCategoriesByRestaurant(restaurantEntity);
         List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();
-        for(RestaurantCategoryEntity restaurantCategoryEntity : restaurantCategoryEntities){
-                categoryEntities.add(restaurantCategoryEntity.getCategory());
+        for (RestaurantCategoryEntity restaurantCategoryEntity : restaurantCategoryEntities) {
+            categoryEntities.add(restaurantCategoryEntity.getCategory());
         }
         //To Do sort this in the order of Category Name
         return categoryEntities;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public CategoryEntity getCategoryById(String categoryUuid) throws CategoryNotFoundException {
         if (categoryUuid == null || categoryUuid.isEmpty()) {
             throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
@@ -47,6 +51,7 @@ public class CategoryService {
         return categoryEntity;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<CategoryEntity> getAllCategoriesOrderedByName() {
         return categoryDAO.getAllCategoriesOrderedByName();
     }
